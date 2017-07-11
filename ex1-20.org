@@ -1,0 +1,78 @@
+* Problem
+Write a program =detab= that replaces tabs in the input with the proper number of blanks to space to the next tab stop.
+Assume a fixed set of tab stops, say every =n= columns. Should =n= be a variable or a symbolic parameter?
+
+* What is a tab stop?
+We can think of tab stops as equally spaced marks on a ruler. For example, if tab is 4 spaces, then the tap
+stops are the | in the following picture:
+
+_ _ _ _ | _ _ _ _ | _ _ _ _ | _ _ _ _ | _ ...
+
+Let's say the input is *a b c d e <tab> f*. It would be lined up like:
+
+a b c d | e _ _ _ | f
+
+So the *<tab>* is replaced by 3 spaces.
+
+* Solution
+
+First we define the tap stop is for every 4 columns.
+
+#+NAME: def-tab
+#+BEGIN_SRC C
+#define TAB 4
+#+END_SRC
+
+We can break down user input into chars and examine them one by one, and keep track of the current position.
+
+#+BEGIN_SRC C :tangle yes :noweb no-export
+  #include<stdio.h>
+  <<def-tab>>
+  int main() {
+
+    // the current char
+    int c;
+
+    // the current position, starting from 1
+    int pos = 1;
+
+    while((c = getchar()) != EOF) {
+      if (c == '\t') {
+        <<when-tab>>
+          }
+    } else if (c == '\n') {
+      <<when-ret>>
+          } else {
+      <<when-rest>>
+        }
+  }
+  }
+#+END_SRC
+
+When a tab is encountered, we calculate the spaces to the next tab stop.
+
+#+NAME: when-tab
+#+BEGIN_SRC C
+  int ns = TAB - (pos - 1) % TAB;
+  while (ns > 0) {
+    putchar(' ');
+    --ns;
+    ++pos;
+#+END_SRC
+
+When <ret> is encountered, we reset position.
+
+#+NAME: when-ret
+#+BEGIN_SRC C
+  putchar(c);
+  pos = 1;
+#+END_SRC
+
+For the rest of the chars, just print it.
+
+#+NAME: when-rest
+#+BEGIN_SRC C
+  putchar(c);
+  ++pos;
+#+END_SRC
+
